@@ -52,7 +52,8 @@ type AuroraRWService struct {
 	schemaVersion      int64
 	schemaMismatch     error
 	rwConfig           map[string]table
-	httpResponseConfig map[string]map[string]string
+	httpResponseBodyConfig map[string]map[string]string
+	httpResponseHeaderConfig map[string]map[string]string
 }
 
 func (t *table) columnMapping() string {
@@ -66,6 +67,7 @@ func (t *table) columnMapping() string {
 
 func NewService(conn *sql.DB, migrate bool, rwConfig *config.Config) *AuroraRWService {
 	tables := make(map[string]table)
+	responseBodyAdditions := make(map[string]map[string]string)
 	responseHeaders := make(map[string]map[string]string)
 	for _, tableConfig := range rwConfig.Paths {
 		t := table{
@@ -77,11 +79,15 @@ func NewService(conn *sql.DB, migrate bool, rwConfig *config.Config) *AuroraRWSe
 		tables[tableConfig.Table] = t
 		log.WithFields(log.Fields{"table": t.name, "primaryKey": t.primaryKey, "columnMapping": t.columnMapping()}).Info("mapping initialised")
 
+		if tableConfig.Response.Body != nil {
+			responseBodyAdditions[tableConfig.Table] = tableConfig.Response.Body["append"]
+		}
+
 		if tableConfig.Response.Headers != nil {
 			responseHeaders[tableConfig.Table] = tableConfig.Response.Headers
 		}
 	}
-	service := &AuroraRWService{conn: conn, rwConfig: tables, httpResponseConfig: responseHeaders}
+	service := &AuroraRWService{conn: conn, rwConfig: tables, httpResponseBodyConfig: responseBodyAdditions, httpResponseHeaderConfig: responseHeaders}
 
 	if err := service.migrate(migrate); err != nil {
 		log.WithError(err).Error("failed to migrate db")
@@ -130,15 +136,19 @@ func (service *AuroraRWService) Read(ctx context.Context, tableName string, key 
 		return Document{}, fmt.Errorf("document column is not configured for table %s", tableName)
 	}
 
-	responseHeaderCols := []string{docColumn, hashColumn}
+	responseCols := []string{docColumn, hashColumn}
 	sqlToHeaderMap := make(map[string]string)
-	for k, v := range service.httpResponseConfig[tableName] {
-		responseHeaderCols = append(responseHeaderCols, v)
+	for k, v := range service.httpResponseHeaderConfig[tableName] {
+		responseCols = append(responseCols, v)
 		sqlToHeaderMap[v] = k
 	}
+	sqlToBodyMap := make(map[string]string)
+	for k, v := range service.httpResponseBodyConfig[tableName] {
+		responseCols = append(responseCols, v)
+		sqlToBodyMap[v] = k
+	}
 
-	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s = ?", strings.Join(responseHeaderCols, ","), table.name, table.primaryKey)
-	readLog.Info(query)
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s = ?", strings.Join(responseCols, ","), table.name, table.primaryKey)
 
 	rows, err := service.conn.Query(query, key)
 	if err != nil {
@@ -164,7 +174,7 @@ func (service *AuroraRWService) Read(ctx context.Context, tableName string, key 
 	
 	var colDoc, colHash int
 	for i := range colNames {
-		switch (colNames[i]) {
+		switch colNames[i] {
 		case docColumn:
 			colDoc = i
 		
@@ -175,7 +185,7 @@ func (service *AuroraRWService) Read(ctx context.Context, tableName string, key 
 		}
 	}
 	
-	cols := len(responseHeaderCols)
+	cols := len(responseCols)
 	vals := make([]interface{}, cols)
 	for i := range vals {
 		vals[i] = new(string)
@@ -189,11 +199,34 @@ func (service *AuroraRWService) Read(ctx context.Context, tableName string, key 
 		return Document{}, err
 	}
 
-	doc := NewDocumentWithHash([]byte(*vals[colDoc].(*string)), *vals[colHash].(*string))
+	nativeDoc := []byte(*vals[colDoc].(*string))
+	if len(sqlToBodyMap) > 0 {
+		// add specified properties to document body - requires that the body can be parsed into JSON
+		rawNativeDoc := make(map[string]interface{})
+		err = json.Unmarshal(nativeDoc, &rawNativeDoc)
+		if err != nil {
+			readLog.WithError(err).Error("unable to unmarshal native content")
+			return Document{}, err
+		}
+
+		for i := 0; i < cols; i++ {
+			if propertyName, ok := sqlToBodyMap[responseCols[i]]; ok {
+				rawNativeDoc[propertyName] = *vals[i].(*string)
+			}
+		}
+
+		nativeDoc, err = json.Marshal(&rawNativeDoc)
+		if err != nil {
+			readLog.WithError(err).Error("unable to marshal native content")
+			return Document{}, err
+		}
+	}
+
+	doc := NewDocumentWithHash(nativeDoc, *vals[colHash].(*string))
 
 	for i := 0; i < cols; i++ {
-		if i != colDoc && i != colHash {
-			doc.Metadata.Set(sqlToHeaderMap[responseHeaderCols[i]], *vals[i].(*string))
+		if headerName, ok := sqlToHeaderMap[responseCols[i]]; ok {
+			doc.Metadata.Set(headerName, *vals[i].(*string))
 		}
 	}
 

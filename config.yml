@@ -28,5 +28,9 @@ paths:
     primaryKey: uuid
     hasConflictDetection: false
     response:
+      body:
+        append:
+          lastModified: last_modified
+          draftReference: draft_ref
       headers:
         "X-Origin-System-Id": origin_system

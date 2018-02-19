@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"testing"
@@ -116,9 +117,12 @@ func (s *ServiceRWTestSuite) TestReadWithMetadata() {
 	testSystem := "foo-bar-baz"
 	testHeader := "X-Origin-System-Id"
 
-	testDocBody := fmt.Sprintf(testDocTemplate, time.Now().String())
+	foo := time.Now().String()
+
+	testDocBody := fmt.Sprintf(testDocTemplate, foo)
 	testDoc := NewDocument([]byte(testDocBody))
-	testDoc.Metadata.Set(timestampMetadata, time.Now().UTC().Format("2006-01-02T15:04:05.000Z"))
+	lastModified := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+	testDoc.Metadata.Set(timestampMetadata, lastModified)
 	testDoc.Metadata.Set(strings.ToLower(tid.TransactionIDHeader), testTID)
 	testDoc.Metadata.Set(strings.ToLower(testHeader), testSystem)
 
@@ -132,7 +136,12 @@ func (s *ServiceRWTestSuite) TestReadWithMetadata() {
 
 	actual, err := s.service.Read(testCtx, testTableWithMetadata, testKey)
 	assert.NoError(s.T(), err)
-	assert.Equal(s.T(), testDoc.Body, actual.Body, "document read from store")
+	actualDoc := make(map[string]string)
+	err = json.Unmarshal(actual.Body, &actualDoc)
+	require.NoError(s.T(), err)
+	assert.Equal(s.T(), foo, actualDoc["foo"], "document read from store")
+	assert.Equal(s.T(), lastModified, actualDoc["lastModified"], "last modified")
+	assert.Equal(s.T(), testTID, actualDoc["draftReference"], "draftReference")
 	assert.Equal(s.T(), expectedDocHash, actual.Hash)
 	assert.Equal(s.T(), testSystem, actual.Metadata[testHeader])
 }

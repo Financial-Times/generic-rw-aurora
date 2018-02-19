@@ -19,6 +19,7 @@ type Mapping struct {
 }
 
 type ResponseMapping struct {
+	Body map[string]map[string]string `yaml:"body"`
 	Headers map[string]string `yaml:"headers"`
 }
 

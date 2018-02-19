@@ -45,15 +45,17 @@ The root object for the configuration is `paths`, which contains a mapping betwe
 
 A path is mapped to a table, a mapping of columns to expressions, and an optional mapping of columns to response headers. The primary key column must also be specified.
 
+### Write mapping
 The expressions for column values may contain the following syntax:
 - `:name` extracts a value from the incoming request (a path or query string parameter)
 - `@.name` extracts a value from the metadata for the incoming request. The name `_timestamp` is populated by the request time and all HTTP headers are propagated into the metadata (with header names forced into lower case).
 - `$` extracts the entire request body
 - `$.name` extracts a JSON path from the request body
 
+### Read mapping
 The response body is the column whose value is the document itself (`$`).
-If write conflict detection is enabled, then the `Document-Hash` header is automatically included in the response.
-Other headers may be extracted from columns by specifying them in the response section. Quoting the names will preserve the case of the header name.
+- For JSON documents, additional columns may be embedded on read by mapping them in the `response.body` section.
+- If write conflict detection is enabled, then the `Document-Hash` header is automatically included in the response. Other headers may be extracted from columns by specifying them in the `response.headers` section. Quoting the names will preserve the case of the header name.
 
 For example:
 ```
@@ -69,6 +71,8 @@ paths:
     primaryKey: uuid
     hasConflictDetection: true
     response:
+      body:
+        lastModified: last_modified
       headers:
         "X-Origin-System-Id": origin_system
   "/published/content/:id/annotations":
