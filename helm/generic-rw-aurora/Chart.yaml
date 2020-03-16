@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: v2
 description: generic-rw-aurora Helm chart for Kubernetes
 name: generic-rw-aurora
 version: 0.0.0
