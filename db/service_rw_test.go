@@ -10,7 +10,7 @@ import (
 
 	"github.com/Financial-Times/generic-rw-aurora/config"
 	tid "github.com/Financial-Times/transactionid-utils-go"
-	"github.com/satori/go.uuid"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	logTest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
@@ -55,7 +55,7 @@ func (s *ServiceRWTestSuite) SetupSuite() {
 	err = cleanDatabase(adminConn, pacUser, pacSchema)
 	require.NoError(s.T(), err)
 
-	pacPassword := uuid.NewV4().String()
+	pacPassword := uuid.New().String()
 	err = createDatabase(adminConn, pacUser, pacPassword, pacSchema)
 	require.NoError(s.T(), err)
 
@@ -80,7 +80,7 @@ func (s *ServiceRWTestSuite) TearDownSuite() {
 }
 
 func (s *ServiceRWTestSuite) TestRead() {
-	testKey := uuid.NewV4().String()
+	testKey := uuid.New().String()
 
 	testTID := "tid_testread"
 
@@ -104,7 +104,7 @@ func (s *ServiceRWTestSuite) TestRead() {
 }
 
 func (s *ServiceRWTestSuite) TestReadNotFound() {
-	testKey := uuid.NewV4().String()
+	testKey := uuid.New().String()
 	testTID := "tid_testread"
 	testCtx := tid.TransactionAwareContext(context.Background(), testTID)
 	_, err := s.service.Read(testCtx, testTable, testKey)
@@ -112,7 +112,7 @@ func (s *ServiceRWTestSuite) TestReadNotFound() {
 }
 
 func (s *ServiceRWTestSuite) TestReadWithMetadata() {
-	testKey := uuid.NewV4().String()
+	testKey := uuid.New().String()
 
 	testTID := "tid_testread"
 	testSystem := "foo-bar-baz"
@@ -140,7 +140,7 @@ func (s *ServiceRWTestSuite) TestReadWithMetadata() {
 }
 
 func (s *ServiceRWTestSuite) TestWriteCreateWithoutConflictDetection() {
-	testKey := uuid.NewV4().String()
+	testKey := uuid.New().String()
 	testLastModified := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
 	testTID := "tid_testcreate"
 
@@ -168,7 +168,7 @@ func (s *ServiceRWTestSuite) TestWriteCreateWithoutConflictDetection() {
 }
 
 func (s *ServiceRWTestSuite) TestWriteUpdateWithoutConflictDetection() {
-	testKey := uuid.NewV4().String()
+	testKey := uuid.New().String()
 	testCreateLastModified := time.Now().Truncate(time.Hour).UTC().Format("2006-01-02T15:04:05.000Z")
 	testDocBody := fmt.Sprintf(testDocTemplate, testCreateLastModified)
 	testCreatePublishRef := "tid_testupdate_1"
@@ -209,7 +209,7 @@ func (s *ServiceRWTestSuite) TestWriteUpdateWithoutConflictDetection() {
 }
 
 func (s *ServiceRWTestSuite) TestWriteCreateWithoutConflict() {
-	testKey := uuid.NewV4().String()
+	testKey := uuid.New().String()
 	testLastModified := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
 	testTID := "tid_testcreate"
 
@@ -239,7 +239,7 @@ func (s *ServiceRWTestSuite) TestWriteCreateWithoutConflict() {
 
 func (s *ServiceRWTestSuite) TestWriteCreateWithConflict() {
 	hook := logTest.NewGlobal()
-	testKey := uuid.NewV4().String()
+	testKey := uuid.New().String()
 	testLastModified := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
 	testTID1 := "tid_testcreate_1"
 	testTID2 := "tid_testcreate_2"
@@ -287,7 +287,7 @@ func (s *ServiceRWTestSuite) TestWriteCreateWithConflict() {
 }
 
 func (s *ServiceRWTestSuite) TestUpdateWithoutConflict() {
-	testKey := uuid.NewV4().String()
+	testKey := uuid.New().String()
 
 	testTID1 := "tid_testupdate_1"
 	testTID2 := "tid_testupdate_2"
@@ -327,7 +327,7 @@ func (s *ServiceRWTestSuite) TestUpdateWithoutConflict() {
 
 func (s *ServiceRWTestSuite) TestUpdateWithConflict() {
 	hook := logTest.NewGlobal()
-	testKey := uuid.NewV4().String()
+	testKey := uuid.New().String()
 
 	testTID1 := "tid_testupdate_1"
 	testTID2 := "tid_testupdate_2"

@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/Financial-Times/generic-rw-aurora/config"
-	"github.com/satori/go.uuid"
+	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -43,7 +43,7 @@ func (s *ServiceSchemaTestSuite) SetupTest() {
 	err = cleanDatabase(s.dbAdminConn, pacUser, pacSchema)
 	require.NoError(s.T(), err)
 
-	pacPassword := uuid.NewV4().String()
+	pacPassword := uuid.New().String()
 	err = createDatabase(s.dbAdminConn, pacUser, pacPassword, pacSchema)
 	require.NoError(s.T(), err)
 

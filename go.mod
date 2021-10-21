@@ -10,6 +10,7 @@ require (
 	github.com/Financial-Times/transactionid-utils-go v0.2.0
 	github.com/davecgh/go-spew v1.1.1-0.20171005155431-ecdeabc65495 // indirect
 	github.com/go-sql-driver/mysql v1.3.0
+	github.com/google/uuid v1.3.0
 	github.com/hashicorp/go-version v0.0.0-20170914154128-fc61389e27c7 // indirect
 	github.com/husobee/vestigo v1.0.2
 	github.com/jawher/mow.cli v1.0.2
@@ -23,7 +24,6 @@ require (
 	github.com/onsi/gomega v1.9.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20161128210544-1f30fe9094a5
-	github.com/satori/go.uuid v1.1.1-0.20170321230731-5bf94b69c6b6
 	github.com/sirupsen/logrus v1.0.3
 	github.com/stretchr/objx v0.0.0-20150928122152-1a9d0bb9f541 // indirect
 	github.com/stretchr/testify v1.1.4
