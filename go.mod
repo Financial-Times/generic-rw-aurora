@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/Financial-Times/api-endpoint v1.0.0
+	github.com/Financial-Times/cm-goose v0.0.0-20220308155951-bcacfc22c6c8
 	github.com/Financial-Times/go-fthealth v0.0.0-20170525095041-e7ccca038327
 	github.com/Financial-Times/http-handlers-go v0.0.0-20170809121007-229ac16f1d9e
 	github.com/Financial-Times/service-status-go v0.0.0-20160323111542-3f5199736a3d
@@ -13,7 +14,6 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/husobee/vestigo v1.0.2
 	github.com/jawher/mow.cli v1.0.2
-	github.com/khatton-ft/goose v2.1.1-0.20171027122414-08a602e0dbc6+incompatible
 	github.com/mohae/customjson v0.0.0-20160630221641-3b3ef2544b5e // indirect
 	github.com/mohae/unsafejson v0.0.0-20160630221641-3b3ef2544b5e // indirect
 	github.com/mohae/utilitybelt v0.0.0-20160829234322-d4f15c760e5a // indirect

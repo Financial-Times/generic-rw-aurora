@@ -1,5 +1,7 @@
 github.com/Financial-Times/api-endpoint v1.0.0 h1:EhJfcVcrktPrweue6dCUQAYcEQiXwh+1byIc8a1nypE=
 github.com/Financial-Times/api-endpoint v1.0.0/go.mod h1:QrJsxP8uEZIPJZon+qhc+zO7H0634DpoqDI291i0Nag=
+github.com/Financial-Times/cm-goose v0.0.0-20220308155951-bcacfc22c6c8 h1:mpaamN0UFfiBy6RT6430N8kGEKKNE1mlbJIbh0FxK/I=
+github.com/Financial-Times/cm-goose v0.0.0-20220308155951-bcacfc22c6c8/go.mod h1:Z/6nUMoJuHV43LZunm/RIz97dqCy1gCJss4u7Ro+kKA=
 github.com/Financial-Times/go-fthealth v0.0.0-20170525095041-e7ccca038327 h1:DeqBOBhqIZG90jr+A+pYR1+Zt0TBZwD5fR+yqJH5EcA=
 github.com/Financial-Times/go-fthealth v0.0.0-20170525095041-e7ccca038327/go.mod h1:gpAzq6W5rCheYlY32JOIxS/VjVcYHbC2PkMzQngHT9c=
 github.com/Financial-Times/http-handlers-go v0.0.0-20170809121007-229ac16f1d9e h1:/Y2wrSfkueFmdOIyQSABebfEe5P+yFyxBnmtnx1C0HM=
@@ -27,8 +29,6 @@ github.com/husobee/vestigo v1.0.2 h1:K4Awra33kZsLUQeTwrtdkj/Yf6pIy7b6qMtJH3s5SA4
 github.com/husobee/vestigo v1.0.2/go.mod h1:JigD7C8lzUfpo1uzqYgefpyZLswrtJbAQxMw7ds7YCE=
 github.com/jawher/mow.cli v1.0.2 h1:CiBs8K6bKCrt6SdVttb+davPTqkBHmaEyhd8gPhcGWU=
 github.com/jawher/mow.cli v1.0.2/go.mod h1:5hQj2V8g+qYmLUVWqu4Wuja1pI57M83EChYLVZ0sMKk=
-github.com/khatton-ft/goose v2.1.1-0.20171027122414-08a602e0dbc6+incompatible h1:kSgM4YiYK/Vf21O2eZgVQhIer4IWF5IdyBMPbrQqie4=
-github.com/khatton-ft/goose v2.1.1-0.20171027122414-08a602e0dbc6+incompatible/go.mod h1:UzKA7AM1kSNAFM1yRkV5oiWAZ/qQ27TwheldCItqXNQ=
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
