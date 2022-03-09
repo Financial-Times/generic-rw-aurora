@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/khatton-ft/goose" // forked from "github.com/pressly/goose"
+	goose "github.com/Financial-Times/cm-goose" // forked from "github.com/pressly/goose"
 	log "github.com/sirupsen/logrus"
 )
 
